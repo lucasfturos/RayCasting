@@ -28,8 +28,8 @@ set(PROJECT_SOURCE                    # Directory of all source file
   # Raycaster
   src/Raycaster/raycaster.cpp
   # Render
+  src/Render/draw.cpp
   src/Render/events.cpp
-  src/Render/objects.cpp
   src/Render/render.cpp
   src/Render/update.cpp
   src/Render/window.cpp
