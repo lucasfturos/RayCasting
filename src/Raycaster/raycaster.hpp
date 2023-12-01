@@ -1,12 +1,15 @@
 #pragma once
 
-#include "../Common/math.hpp"
 #include "../Common/util.hpp"
 
 class Raycaster {
   private:
-    const float fov = PI / 3.0f;
     float step;
+    const float fov = PI / 3.0f;
+
+    void intersectionRayWithWall(Position &ray, float &distance,
+                                 vector<vector<int>> tile, float vAngle,
+                                 int count);
 
   public:
     const int rayCount = 30;
@@ -15,9 +18,10 @@ class Raycaster {
         Position hitPosition;
         float distance;
     };
-    std::vector<RayResult> rayCastWorld(Position start, const Map &map,
-                                        float playerAngle);
 
+  public:
+    std::vector<RayResult> rayCastWorld(Position start,
+                                        vector<vector<int>> tile, float vAngle);
     Position rayCastMinimap(Position start, vector<vector<int>> tile,
                             float vAngle, int count);
 

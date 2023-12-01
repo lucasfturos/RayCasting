@@ -16,7 +16,6 @@ set(CMAKE_CXX_STANDARD 20)            # Enable c++20 standard
 
 set(PROJECT_HEADER                    # Directory of all header file
   # Common
-  src/Common/math.hpp
   src/Common/util.hpp
   # Raycaster
   src/Raycaster/raycaster.hpp

@@ -110,7 +110,7 @@ void Render::drawVerticalColumn(int column, float wallHeight) {
 
 void Render::drawRaycasterResults(
     const std::vector<Raycaster::RayResult> &results) {
-    for (int i = 0; i < raycaster->rayCount; ++i) {
+    for (auto i{0}; i < raycaster->rayCount; ++i) {
         const Raycaster::RayResult &result = results[i];
 
         // Mapeia a distância para o intervalo [0, 1]
@@ -121,7 +121,7 @@ void Render::drawRaycasterResults(
         normalizedDistance = std::max(0.0f, std::min(1.0f, normalizedDistance));
 
         // Mapeia a altura para o intervalo desejado
-        float wallHeight = normalizedDistance * 100;
+        float wallHeight = normalizedDistance * 200;
 
         // Desenha a coluna vertical correspondente
         drawVerticalColumn(i, wallHeight);
@@ -133,9 +133,8 @@ void Render::drawPlayerVision() {
     // Posição inicial dos raios
     Position start = playerPos;
 
-    // Lance os raios e obtenha os resultados
     std::vector<Raycaster::RayResult> results =
-        raycaster->rayCastWorld(start, map, vAngle);
+        raycaster->rayCastWorld(start, map.tile, vAngle);
 
     // Desenha as colunas verticais com base nos resultados dos raios
     drawRaycasterResults(results);

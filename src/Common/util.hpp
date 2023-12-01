@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <memory>
 #include <vector>
 
@@ -23,7 +24,6 @@ enum ColorTilemap : int {
 // Usings
 using Position = Point<float>;
 using Velocity = Point<float>;
-using Plane = Point<float>;
 
 using Direction = Point<int>;
 using Mouse = Point<int>;
@@ -31,3 +31,6 @@ using Mouse = Point<int>;
 using std::make_shared;
 using std::shared_ptr;
 using std::vector;
+
+// Constants
+const float PI = M_PI;

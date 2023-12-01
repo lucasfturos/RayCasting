@@ -3,7 +3,6 @@
 #include "../Raycaster/raycaster.hpp"
 #include <SDL2/SDL.h>
 #include <iostream>
-#include <random>
 #include <sstream>
 
 class Render {
