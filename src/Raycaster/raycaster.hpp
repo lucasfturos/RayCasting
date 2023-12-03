@@ -12,7 +12,7 @@ class Raycaster {
                                  int count);
 
   public:
-    const int rayCount = 30;
+    const int rayCount = 50;
     const float maxDistance = 400.0f;
     struct Ray {
         Position hitPosition;
