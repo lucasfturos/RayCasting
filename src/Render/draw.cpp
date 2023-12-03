@@ -73,12 +73,10 @@ void Render::drawPlayerVisionOnMiniMap(int x, int y, float scaleX,
 }
 
 void Render::drawFloor(int column, float wallHeight) {
-    // Ajusta a posição e largura da coluna
     int x1 = column * (WIDTH / raycaster->rayCount);
     int x2 = x1 + WIDTH / raycaster->rayCount;
     int y2 = (HEIGHT + wallHeight) / 2;
 
-    // Desenha o chão
     SDL_Rect floorRect = {
         .x = x1,
         .y = y2,
@@ -90,19 +88,17 @@ void Render::drawFloor(int column, float wallHeight) {
 }
 
 void Render::drawCeiling(int column, float wallHeight) {
-    // Ajusta a posição e largura da coluna
     int x1 = column * (WIDTH / raycaster->rayCount);
     int x2 = x1 + WIDTH / raycaster->rayCount;
     int y1 = (HEIGHT - wallHeight) / 2;
 
-    // Desenha o teto
     SDL_Rect ceilingRect = {
         .x = x1,
         .y = 0,
         .w = x2 - x1,
         .h = y1,
     };
-    SDL_SetRenderDrawColor(renderer, 0, 0, 128, 255); // Cor azul para o teto
+    SDL_SetRenderDrawColor(renderer, 0, 0, 128, 255);
     SDL_RenderFillRect(renderer, &ceilingRect);
 }
 
