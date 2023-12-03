@@ -72,70 +72,76 @@ void Render::drawPlayerVisionOnMiniMap(int x, int y, float scaleX,
     }
 }
 
-void Render::drawVerticalColumn(int column, float wallHeight) {
+void Render::drawFloor(int column, float wallHeight) {
+    // Ajusta a posição e largura da coluna
+    int x1 = column * (WIDTH / raycaster->rayCount);
+    int x2 = x1 + WIDTH / raycaster->rayCount;
+    int y2 = (HEIGHT + wallHeight) / 2;
+
+    // Desenha o chão
+    SDL_Rect floorRect = {
+        .x = x1,
+        .y = y2,
+        .w = x2 - x1,
+        .h = HEIGHT - y2,
+    };
+    SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255);
+    SDL_RenderFillRect(renderer, &floorRect);
+}
+
+void Render::drawCeiling(int column, float wallHeight) {
     // Ajusta a posição e largura da coluna
     int x1 = column * (WIDTH / raycaster->rayCount);
     int x2 = x1 + WIDTH / raycaster->rayCount;
     int y1 = (HEIGHT - wallHeight) / 2;
-    int y2 = y1 + wallHeight;
 
-    // Desenha apenas a borda do retângulo
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    // Desenha o teto
+    SDL_Rect ceilingRect = {
+        .x = x1,
+        .y = 0,
+        .w = x2 - x1,
+        .h = y1,
+    };
+    SDL_SetRenderDrawColor(renderer, 0, 0, 128, 255); // Cor azul para o teto
+    SDL_RenderFillRect(renderer, &ceilingRect);
+}
 
-    // Linha à esquerda
-    SDL_RenderDrawLine(renderer, x1, y1, x1, y2);
-    // Linha superior
-    SDL_RenderDrawLine(renderer, x1, y1, x2, y1);
-    // Linha à direita
-    SDL_RenderDrawLine(renderer, x2, y1, x2, y2);
-    // Linha inferior
-    SDL_RenderDrawLine(renderer, x1, y2, x2, y2);
-
-    /*
+void Render::drawWall(int column, float wallHeight) {
     int x = column * (WIDTH / raycaster->rayCount);
     int width = WIDTH / raycaster->rayCount;
     int y = (HEIGHT - wallHeight) / 2;
 
-    // Desenha a coluna vertical
     SDL_Rect rect = {
         .x = x,
         .y = y,
         .w = width,
         .h = static_cast<int>(wallHeight),
     };
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
-    */
 }
 
-void Render::drawRaycasterResults(
-    const std::vector<Raycaster::RayResult> &results) {
+void Render::drawRaycaster(const std::vector<Raycaster::Ray> &rays) {
     for (auto i{0}; i < raycaster->rayCount; ++i) {
-        const Raycaster::RayResult &result = results[i];
+        const Raycaster::Ray &ray = rays[i];
 
-        // Mapeia a distância para o intervalo [0, 1]
         float normalizedDistance =
-            1.0f - (result.distance / raycaster->maxDistance);
-
-        // Limita o valor no intervalo [0, 1]
+            1.0f - (ray.distance / raycaster->maxDistance);
         normalizedDistance = std::max(0.0f, std::min(1.0f, normalizedDistance));
 
-        // Mapeia a altura para o intervalo desejado
-        float wallHeight = normalizedDistance * 200;
+        int sizeWall = 200;
+        float wallHeight = normalizedDistance * sizeWall;
 
-        // Desenha a coluna vertical correspondente
-        drawVerticalColumn(i, wallHeight);
+        drawCeiling(i, wallHeight);
+        drawWall(i, wallHeight);
+        drawFloor(i, wallHeight);
     }
 }
 
 void Render::drawPlayerVision() {
     float vAngle = atan2(mousePos.y - cameraPos.y, mousePos.x - cameraPos.x);
-    // Posição inicial dos raios
     Position start = playerPos;
-
-    std::vector<Raycaster::RayResult> results =
+    vector<Raycaster::Ray> rays =
         raycaster->rayCastWorld(start, map.tile, vAngle);
-
-    // Desenha as colunas verticais com base nos resultados dos raios
-    drawRaycasterResults(results);
+    drawRaycaster(rays);
 }

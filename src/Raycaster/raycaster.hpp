@@ -14,14 +14,14 @@ class Raycaster {
   public:
     const int rayCount = 30;
     const float maxDistance = 400.0f;
-    struct RayResult {
+    struct Ray {
         Position hitPosition;
         float distance;
     };
 
   public:
-    std::vector<RayResult> rayCastWorld(Position start,
-                                        vector<vector<int>> tile, float vAngle);
+    vector<Ray> rayCastWorld(Position start, vector<vector<int>> tile,
+                             float vAngle);
     Position rayCastMinimap(Position start, vector<vector<int>> tile,
                             float vAngle, int count);
 

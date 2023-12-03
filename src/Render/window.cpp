@@ -8,7 +8,7 @@ void Render::initWindow() {
 
     window = SDL_CreateWindow("Raycasting", SDL_WINDOWPOS_CENTERED,
                               SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT,
-                              SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
+                              SDL_WINDOW_VULKAN);
     if (window == nullptr) {
         throw std::runtime_error(std::string("SDL_CreateWindow Error: ") +
                                  SDL_GetError());
@@ -29,19 +29,19 @@ Uint32 Render::getPixel(SDL_Surface *surface, int x, int y, Uint32 threshold) {
 
     switch (bpp) {
     case 1:
-        return (*p > threshold) ? ColorTilemap::Wall : ColorTilemap::Ground;
+        return (*p > threshold) ? ColorTilemap::Wall : ColorTilemap::Floor;
     case 2:
         return (*reinterpret_cast<Uint16 *>(p) > threshold)
                    ? ColorTilemap::Wall
-                   : ColorTilemap::Ground;
+                   : ColorTilemap::Floor;
     case 3:
         return ((static_cast<Uint32>(p[0]) + p[1] + p[2]) / 3 > threshold)
                    ? ColorTilemap::Wall
-                   : ColorTilemap::Ground;
+                   : ColorTilemap::Floor;
     case 4:
         return (*reinterpret_cast<Uint32 *>(p) > threshold)
                    ? ColorTilemap::Wall
-                   : ColorTilemap::Ground;
+                   : ColorTilemap::Floor;
     default:
         return 0;
     }

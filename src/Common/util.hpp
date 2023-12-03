@@ -18,7 +18,7 @@ struct Map {
 // Enums
 enum ColorTilemap : int {
     Wall = 1,   // Representa a cor das paredes
-    Ground = 0, // Representa a cor do chão
+    Floor = 0, // Representa a cor do chão
 };
 
 // Usings

@@ -50,8 +50,8 @@ class Render {
   private:
     // Draw
     void draw();
-    void drawMiniMap();
     // Draw minimap
+    void drawMiniMap();
     void drawPlayerOnMiniMap(int x, int y, float scaleX, float scaleY);
     void drawCircle(SDL_Renderer *renderer, float x, float y, int radius,
                     SDL_Color color);
@@ -59,8 +59,10 @@ class Render {
     void drawTilemapOnMiniMap(int x, int y, int width, int height);
     // Draw World Raycasting
     void drawPlayerVision();
-    void drawVerticalColumn(int column, float wallHeight);
-    void drawRaycasterResults(const std::vector<Raycaster::RayResult> &results);
+    void drawWall(int column, float wallHeight);
+    void drawFloor(int column, float wallHeight);
+    void drawCeiling(int column, float wallHeight);
+    void drawRaycaster(const std::vector<Raycaster::Ray> &rays);
 
     // Window
     void initWindow();

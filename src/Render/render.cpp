@@ -17,8 +17,8 @@ Render::~Render() {
 }
 
 void Render::draw() {
-    drawMiniMap();
     drawPlayerVision();
+    drawMiniMap();
 }
 
 void Render::run() {
