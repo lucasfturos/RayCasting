@@ -20,8 +20,17 @@ class Render {
   private:
     SDL_Window *window;
     SDL_Renderer *renderer;
-    SDL_Surface *worldMapSurface;
+
+    SDL_Texture *wallTexture;
+    SDL_Texture *floorTexture;
+    SDL_Texture *ceilingTexture;
     SDL_Texture *worldMapTexture;
+
+    SDL_Surface *wallSurface;
+    SDL_Surface *floorSurface;
+    SDL_Surface *ceilingSurface;
+    SDL_Surface *worldMapSurface;
+
     SDL_Color objColor = {255, 0, 0, 255};
 
   private:
@@ -65,7 +74,11 @@ class Render {
     void drawRaycaster(const std::vector<Raycaster::Ray> &rays);
 
     // Window
+    void loadWall();
+    void loadFloor();
     void initWindow();
+    void initTexture();
+    void loadCeiling();
     void loadTilemap();
     Uint32 getPixel(SDL_Surface *surface, int x, int y, Uint32 threshold);
 
@@ -81,6 +94,9 @@ class Render {
     void handleMouseMotionEvent();
     void handleKeyUpEvent(const SDL_Event &event);
     void handleKeyDownEvent(const SDL_Event &event);
+
+    void destroySurface();
+    void destroyTexture();
 
   public:
     Render();

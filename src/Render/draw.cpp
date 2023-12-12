@@ -83,8 +83,8 @@ void Render::drawFloor(int column, float wallHeight) {
         .w = x2 - x1,
         .h = HEIGHT - y2,
     };
-    SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255);
-    SDL_RenderFillRect(renderer, &floorRect);
+
+    SDL_RenderCopy(renderer, floorTexture, nullptr, &floorRect);
 }
 
 void Render::drawCeiling(int column, float wallHeight) {
@@ -98,8 +98,8 @@ void Render::drawCeiling(int column, float wallHeight) {
         .w = x2 - x1,
         .h = y1,
     };
-    SDL_SetRenderDrawColor(renderer, 0, 0, 128, 255);
-    SDL_RenderFillRect(renderer, &ceilingRect);
+
+    SDL_RenderCopy(renderer, ceilingTexture, nullptr, &ceilingRect);
 }
 
 void Render::drawWall(int column, float wallHeight) {
@@ -107,14 +107,14 @@ void Render::drawWall(int column, float wallHeight) {
     int width = WIDTH / raycaster->rayCount;
     int y = (HEIGHT - wallHeight) / 2;
 
-    SDL_Rect rect = {
+    SDL_Rect wallRect = {
         .x = x,
         .y = y,
-        .w = width,
+        .w = width * 5,
         .h = static_cast<int>(wallHeight),
     };
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
+
+    SDL_RenderCopy(renderer, wallTexture, nullptr, &wallRect);
 }
 
 void Render::drawRaycaster(const std::vector<Raycaster::Ray> &rays) {
@@ -139,5 +139,8 @@ void Render::drawPlayerVision() {
     Position start = playerPos;
     vector<Raycaster::Ray> rays =
         raycaster->rayCastWorld(start, map.tile, vAngle);
+
+    
+
     drawRaycaster(rays);
 }

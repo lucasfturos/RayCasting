@@ -51,6 +51,9 @@ add_compile_options(
   -Wall -Wextra -Wpedantic -Werror -pedantic -g -O2
 )
 
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
 # Add executable target with source and header files listed in 
 # PROJECT_HEADER and PROJECT_SOURCE variable
 add_executable(${PROJECT_NAME} 
@@ -58,8 +61,6 @@ add_executable(${PROJECT_NAME}
   ${PROJECT_SOURCE}
 )
 
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME}
   PRIVATE ${SDL2_LIBRARIES}
 )
@@ -69,6 +70,7 @@ target_include_directories(${PROJECT_NAME}
   PRIVATE src 
   PRIVATE src/Common 
   PRIVATE src/Render
+  PRIVATE ${SDL2_LIBRARIES}
 )
 
 # -------------------------------------------------------------------

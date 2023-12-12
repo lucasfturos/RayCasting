@@ -47,12 +47,63 @@ Uint32 Render::getPixel(SDL_Surface *surface, int x, int y, Uint32 threshold) {
     }
 }
 
-void Render::loadTilemap() {
-    worldMapSurface = SDL_LoadBMP("./img/Mapa.bmp");
-    if (!worldMapSurface) {
-        throw std::runtime_error(std::string("SDL_LoadBMP Error: ") +
-                                 SDL_GetError());
+void Render::initTexture() {
+    loadTilemap();
+    loadCeiling();
+    loadWall();
+    loadFloor();
+}
+
+void Render::loadWall() {
+    wallSurface = SDL_LoadBMP("./img/Wall/wall.bmp");
+    !wallSurface ? throw std::runtime_error(std::string("SDL_LoadBMP Error: ") +
+                                            SDL_GetError())
+                 : 0;
+    wallTexture = SDL_CreateTextureFromSurface(renderer, wallSurface);
+    if (!wallTexture) {
+        SDL_FreeSurface(wallSurface);
+        throw std::runtime_error(
+            std::string("SDL_CreateTextureFromSurface Error: ") +
+            SDL_GetError());
     }
+}
+
+void Render::loadFloor() {
+    floorSurface = SDL_LoadBMP("./img/Floor/Stontex.bmp");
+    !floorSurface ? throw std::runtime_error(
+                        std::string("SDL_LoadBMP Error: ") + SDL_GetError())
+                  : 0;
+
+    floorTexture = SDL_CreateTextureFromSurface(renderer, floorSurface);
+    if (!floorTexture) {
+        SDL_FreeSurface(floorSurface);
+        throw std::runtime_error(
+            std::string("SDL_CreateTextureFromSurface Error: ") +
+            SDL_GetError());
+    }
+}
+
+void Render::loadCeiling() {
+    ceilingSurface = SDL_LoadBMP("./img/Ceiling/Stone.bmp");
+    !ceilingSurface
+        ? throw std::runtime_error(std::string("IMG_LoadTexture Error: ") +
+                                   SDL_GetError())
+        : 0;
+
+    ceilingTexture = SDL_CreateTextureFromSurface(renderer, ceilingSurface);
+    if (!ceilingTexture) {
+        SDL_FreeSurface(ceilingSurface);
+        throw std::runtime_error(
+            std::string("SDL_CreateTextureFromSurface Error: ") +
+            SDL_GetError());
+    }
+}
+
+void Render::loadTilemap() {
+    worldMapSurface = SDL_LoadBMP("./img/Mapa/Mapa.bmp");
+    !worldMapSurface ? throw std::runtime_error(
+                           std::string("SDL_LoadBMP Error: ") + SDL_GetError())
+                     : 0;
 
     worldMapTexture = SDL_CreateTextureFromSurface(renderer, worldMapSurface);
     if (!worldMapTexture) {

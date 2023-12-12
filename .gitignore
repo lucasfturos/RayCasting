@@ -1,3 +1,4 @@
 build
-img/Mapa.xcf
+img/Mapa/Mapa.xcf
+img/**/*.png
 embedded/
