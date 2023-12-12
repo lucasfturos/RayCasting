@@ -6,7 +6,7 @@ Logo será feita uma adaptação para rodar no ESP32 e Arduino
 
 ## Créditos
 
-Texturas do jogo estão com os créditos em seus respectivos diretórios nos arquivos README.
+Texturas do jogo estão com os créditos em seus respectivos diretórios nos arquivos CREDITS.
 
 [The Coding Train](https://youtu.be/TOEi6T2mtHo)
 
