@@ -140,7 +140,5 @@ void Render::drawPlayerVision() {
     vector<Raycaster::Ray> rays =
         raycaster->rayCastWorld(start, map.tile, vAngle);
 
-    
-
     drawRaycaster(rays);
 }
