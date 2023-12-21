@@ -7,8 +7,6 @@
 
 class Render {
   private:
-    const int WIDTH = 1080;
-    const int HEIGHT = 720;
     const int FPS = 16;
 
     const float characterWidth = 20.0f;
@@ -51,6 +49,10 @@ class Render {
     float speed = 150.0f;
     float deltaTime = 0.0f;
     float radiusObjPlayer = 30.0f;
+    float maskRadius;
+    float maskIntensity;
+    float brightnessFactor;
+    float distanceToCenter;
 
     bool quit = false;
 
@@ -64,14 +66,14 @@ class Render {
     void drawPlayerOnMiniMap(int x, int y, float scaleX, float scaleY);
     void drawCircle(SDL_Renderer *renderer, float x, float y, int radius,
                     SDL_Color color);
-    void drawPlayerVisionOnMiniMap(int x, int y, float scaleX, float scaleY);
     void drawTilemapOnMiniMap(int x, int y, int width, int height);
+    void drawPlayerVisionOnMiniMap(int x, int y, float scaleX, float scaleY);
     // Draw World Raycasting
     void drawPlayerVision();
-    void drawWall(int column, float wallHeight);
     void drawFloor(int column, float wallHeight);
     void drawCeiling(int column, float wallHeight);
-    void drawRaycaster(const std::vector<Raycaster::Ray> &rays);
+    void drawRaycaster(const vector<Raycaster::Ray> &rays);
+    void drawWall(int column, float wallHeight, int side, float distanceToWall);
 
     // Window
     void loadWall();

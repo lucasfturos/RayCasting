@@ -17,7 +17,7 @@ struct Map {
 
 // Enums
 enum ColorTilemap : int {
-    Wall = 1,   // Representa a cor das paredes
+    Wall = 1,  // Representa a cor das paredes
     Floor = 0, // Representa a cor do chão
 };
 
@@ -33,4 +33,15 @@ using std::shared_ptr;
 using std::vector;
 
 // Constants
-const float PI = M_PI;
+constexpr int WIDTH = 1080;
+constexpr int HEIGHT = 720;
+constexpr float PI = M_PI;
+
+// Functions
+template <typename T> inline T deg_to_rad(T degrees) {
+    return PI * degrees / 180;
+}
+
+template <typename T> inline T getDegrees(T degrees) {
+    return fmod(360 + fmod(degrees, 360), 360);
+}

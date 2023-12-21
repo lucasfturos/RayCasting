@@ -4,6 +4,7 @@
 
 class Raycaster {
   private:
+    int side;
     float step;
     const float fov = PI / 3.0f;
 
@@ -12,11 +13,13 @@ class Raycaster {
                                  int count);
 
   public:
-    const int rayCount = 30;
-    const float maxDistance = 400.0f;
+    const int rayCount = 40;
+    const float maxDistance = 300.0f;
     struct Ray {
         Position hitPosition;
         float distance;
+        float direction;
+        int side;
     };
 
   public:

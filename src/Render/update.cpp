@@ -6,10 +6,9 @@ void Render::updateMovements() {
 }
 
 void Render::updatePlayerPosition() {
-    const Position next = {
-        .x = playerPos.x + playerVelocity.x * deltaTime,
-        .y = playerPos.y + playerVelocity.y * deltaTime,
-    };
+    Position next = {0, 0};
+    next.x += playerPos.x + playerVelocity.x * deltaTime;
+    next.y += playerPos.y + playerVelocity.y * deltaTime;
 
     if (!checkPlayerCollision(next)) {
         playerPos = {next.x, next.y};
@@ -24,17 +23,14 @@ void Render::updateCameraPosition() {
 }
 
 bool Render::checkPlayerCollision(Position next) {
-    // Converte as coordenadas do jogador para índices da matriz
     int tileX = static_cast<int>(next.x);
     int tileY = static_cast<int>(next.y);
 
-    // Calcula as posições do jogador nos cantos do retângulo de colisão
     float left = next.x - radiusObjPlayer;
     float right = next.x + radiusObjPlayer;
     float top = next.y - radiusObjPlayer;
     float bottom = next.y + radiusObjPlayer;
 
-    // Define os limites para as verificações de colisão
     int startY = std::max(0, tileY - static_cast<int>(radiusObjPlayer));
     int endY =
         std::min(wordlMapHeight - 1, tileY + static_cast<int>(radiusObjPlayer));
@@ -42,7 +38,6 @@ bool Render::checkPlayerCollision(Position next) {
     int endX =
         std::min(wordlMapWidth - 1, tileX + static_cast<int>(radiusObjPlayer));
 
-    // Verifica se o jogador está colidindo com uma parede (valor 1)
     for (int y = startY; y <= endY; ++y) {
         for (int x = startX; x <= endX; ++x) {
             if (map.tile[y][x] == ColorTilemap::Wall) {

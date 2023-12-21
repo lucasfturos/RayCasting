@@ -4,10 +4,11 @@ void Render::handleQuitEvent() { quit = true; }
 
 void Render::handleMouseMotionEvent() {
     SDL_GetMouseState(&mousePos.x, &mousePos.y);
-    float angle =
-        atan2(mousePos.y - initPosWindow.y, mousePos.x - initPosWindow.x);
 
-    // Atualiza o ponto final do raio de visão em relação à câmera
+    float dx = mousePos.x - initPosWindow.x;
+    float dy = mousePos.y - initPosWindow.y;
+    float angle = atan2(dy, dx);
+
     cameraPos.x = initPosWindow.x + cos(angle) * radiusObjPlayer;
     cameraPos.y = initPosWindow.y + sin(angle) * radiusObjPlayer;
 
@@ -81,3 +82,4 @@ void Render::handleEvents() {
 
     lastTime = currentTime;
 }
+
