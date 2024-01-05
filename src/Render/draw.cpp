@@ -3,13 +3,27 @@
 void Render::drawCircle(SDL_Renderer *renderer, float x, float y, int radius,
                         SDL_Color color) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    int cx = radius;
+    int cy = 0;
+    int radiusError = 1 - cx;
 
-    for (float angle = 0; angle < 360; angle += 0.1) {
-        float radianAngle = deg_to_rad(angle);
-        int drawX = static_cast<int>(x + radius * cos(radianAngle));
-        int drawY = static_cast<int>(y + radius * sin(radianAngle));
+    while (cx >= cy) {
+        SDL_RenderDrawPoint(renderer, x + cx, y - cy);
+        SDL_RenderDrawPoint(renderer, x - cx, y - cy);
+        SDL_RenderDrawPoint(renderer, x + cx, y + cy);
+        SDL_RenderDrawPoint(renderer, x - cx, y + cy);
+        SDL_RenderDrawPoint(renderer, x + cy, y - cx);
+        SDL_RenderDrawPoint(renderer, x - cy, y - cx);
+        SDL_RenderDrawPoint(renderer, x + cy, y + cx);
+        SDL_RenderDrawPoint(renderer, x - cy, y + cx);
+        cy++;
 
-        SDL_RenderDrawPoint(renderer, drawX, drawY);
+        if (radiusError < 0) {
+            radiusError += 2 * cy + 1;
+        } else {
+            cx--;
+            radiusError += 2 * (cy - cx + 1);
+        }
     }
 }
 
@@ -27,7 +41,12 @@ void Render::drawMiniMap() {
 }
 
 void Render::drawTilemapOnMiniMap(int x, int y, int width, int height) {
-    SDL_Rect dstRect = {.x = x, .y = y, .w = width, .h = height};
+    SDL_Rect dstRect = {
+        .x = x,
+        .y = y,
+        .w = width,
+        .h = height,
+    };
     SDL_Rect srcRect = {
         .x = 0, .y = 0, .w = wordlMapWidth, .h = wordlMapHeight};
     SDL_RenderCopy(renderer, worldMapTexture, &srcRect, &dstRect);
@@ -63,10 +82,6 @@ void Render::drawFloor(int column, float wallHeight) {
     int x2 = (column + 1) * WIDTH / raycaster->rayCount;
     int y2 = (HEIGHT + wallHeight) / 2;
 
-    distanceToCenter = std::hypot((x1 + x2) / 2 - WIDTH / 2, y2 - HEIGHT / 2);
-    maskIntensity = 1.0f - (distanceToCenter / maskRadius);
-    brightnessFactor *= std::max(0.0f, maskIntensity);
-
     SDL_Rect floorRect = {
         .x = x1,
         .y = y2,
@@ -74,21 +89,20 @@ void Render::drawFloor(int column, float wallHeight) {
         .h = HEIGHT - y2,
     };
 
-    // SDL_RenderCopy(renderer, floorTexture, nullptr, &floorRect);
-    SDL_SetRenderDrawColor(renderer, brightnessFactor * 150,
-                           brightnessFactor * 150, brightnessFactor * 150,
-                           brightnessFactor * 255);
-    SDL_RenderFillRect(renderer, &floorRect);
+    SDL_Rect textureRect = {
+        .x = column * (wordlMapWidth / raycaster->rayCount),
+        .y = wordlMapHeight / 2,
+        .w = wordlMapWidth / raycaster->rayCount,
+        .h = wordlMapHeight / 2,
+    };
+
+    SDL_RenderCopy(renderer, floorTexture, &textureRect, &floorRect);
 }
 
 void Render::drawCeiling(int column, float wallHeight) {
     int x1 = column * (WIDTH / raycaster->rayCount);
     int x2 = (column + 1) * WIDTH / raycaster->rayCount;
     int y1 = (HEIGHT - wallHeight) / 2;
-
-    distanceToCenter = std::hypot((x1 + x2) / 2 - WIDTH / 2, y1 - HEIGHT / 2);
-    maskIntensity = 1.0f - (distanceToCenter / maskRadius);
-    brightnessFactor *= std::max(0.0f, maskIntensity);
 
     SDL_Rect ceilingRect = {
         .x = x1,
@@ -97,11 +111,14 @@ void Render::drawCeiling(int column, float wallHeight) {
         .h = y1,
     };
 
-    // SDL_RenderCopy(renderer, ceilingTexture, nullptr, &ceilingRect);
-    SDL_SetRenderDrawColor(renderer, brightnessFactor * 60,
-                           brightnessFactor * 60, brightnessFactor * 60,
-                           brightnessFactor * 255);
-    SDL_RenderFillRect(renderer, &ceilingRect);
+    SDL_Rect textureRect = {
+        .x = column * (wordlMapWidth / raycaster->rayCount),
+        .y = 0,
+        .w = wordlMapWidth / raycaster->rayCount,
+        .h = y1, // Use a altura do teto como altura da textura
+    };
+
+    SDL_RenderCopy(renderer, ceilingTexture, &textureRect, &ceilingRect);
 }
 
 void Render::drawWall(int column, float wallHeight, int side,
@@ -113,29 +130,25 @@ void Render::drawWall(int column, float wallHeight, int side,
     int textureHeight = static_cast<int>(HEIGHT / distanceToWall);
     int textureWidth = wallSurface->w;
 
-    int textureY =
-        static_cast<int>((wallHeight / 2.0f) * textureHeight / wallHeight);
+    int textureY = 12;
 
-    int numRepetitions = 10;
     SDL_Rect textureRect = {
         .x = 0,
         .y = textureY,
         .w = textureWidth,
         .h = textureHeight,
     };
+
     SDL_Rect wallRect = {
         .x = x,
         .y = y,
-        .w = width * numRepetitions,
+        .w = width,
         .h = static_cast<int>(wallHeight),
     };
 
-    brightnessFactor = 1.0f - (distanceToWall / raycaster->maxDistance);
+    float brightnessFactor = 1.0f - (distanceToWall);
     brightnessFactor = std::max(0.2f, brightnessFactor);
     brightnessFactor *= (side == 1) ? 0.5f : 1.0f;
-
-    SDL_SetTextureColorMod(wallTexture, brightnessFactor * 255,
-                           brightnessFactor * 255, brightnessFactor * 255);
 
     SDL_RenderCopy(renderer, wallTexture, &textureRect, &wallRect);
 }
@@ -162,32 +175,6 @@ void Render::drawPlayerVision() {
     Position start = playerPos;
     vector<Raycaster::Ray> rays =
         raycaster->rayCastWorld(start, map.tile, vAngle);
-
-    maskRadius = raycaster->maxDistance;
-
-    for (auto i{0}; i < raycaster->rayCount; ++i) {
-        const Raycaster::Ray &ray = rays[i];
-
-        // Ajuste de brilho para a função drawCircle
-        brightnessFactor = 1.0f - (ray.distance / raycaster->maxDistance);
-        brightnessFactor = std::max(0.2f, brightnessFactor);
-
-        // Ajuste de intensidade da máscara
-        distanceToCenter =
-            std::hypot((WIDTH / 2.0f) - WIDTH / 2.0f, 0 - HEIGHT / 2.0f);
-        maskIntensity = 1.0f - (distanceToCenter / maskRadius);
-        brightnessFactor *= std::max(0.0f, maskIntensity);
-
-        // Desenhar o raio apenas se estiver dentro do campo de visão
-        if (i >= raycaster->rayCount / 4 && i <= 3 * raycaster->rayCount / 4) {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0,
-                                   static_cast<Uint8>(255 * brightnessFactor));
-            SDL_RenderDrawLineF(
-                renderer, WIDTH / 2.0f, HEIGHT / 2.0f,
-                WIDTH / 2.0f + ray.distance * cos(ray.direction),
-                HEIGHT / 2.0f + ray.distance * sin(ray.direction));
-        }
-    }
 
     drawRaycaster(rays);
 }

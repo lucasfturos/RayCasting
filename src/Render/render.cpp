@@ -35,6 +35,8 @@ Render::~Render() {
 
     SDL_SetRelativeMouseMode(SDL_FALSE);
     SDL_Quit();
+
+    raycaster.reset();
 }
 
 void Render::draw() {

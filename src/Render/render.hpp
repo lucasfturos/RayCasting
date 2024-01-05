@@ -5,6 +5,10 @@
 #include <iostream>
 #include <sstream>
 
+struct Color {
+    Uint8 r, g, b;
+};
+
 class Render {
   private:
     const int FPS = 16;
@@ -49,12 +53,10 @@ class Render {
     float speed = 150.0f;
     float deltaTime = 0.0f;
     float radiusObjPlayer = 30.0f;
-    float maskRadius;
-    float maskIntensity;
-    float brightnessFactor;
-    float distanceToCenter;
 
     bool quit = false;
+
+    std::vector<std::vector<Color>> wallTextures;
 
     shared_ptr<Raycaster> raycaster;
 
