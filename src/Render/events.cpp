@@ -3,29 +3,30 @@
 void Render::handleQuitEvent() { quit = true; }
 
 void Render::handleMouseMotionEvent() {
-    SDL_GetMouseState(&mousePos.x, &mousePos.y);
+    int x, y;
+    SDL_GetMouseState(&x, &y);
 
-    float dx = mousePos.x - initPosWindow.x;
-    float dy = mousePos.y - initPosWindow.y;
-    float angle = atan2(dy, dx);
+    int dx = x - initPosWindow.x;
 
-    cameraPos.x = initPosWindow.x + cos(angle) * radiusObjPlayer;
-    cameraPos.y = initPosWindow.y + sin(angle) * radiusObjPlayer;
+    float sensitivity = 0.005f;
+    float angle = dx * sensitivity;
+    cameraAngle += angle;
+    if (cameraAngle < 0) {
+        cameraAngle += 2 * M_PI;
+    } else if (cameraAngle >= 2 * M_PI) {
+        cameraAngle -= 2 * M_PI;
+    }
 
-    std::stringstream ss;
-    ss << "Raycasting - Mouse: X=" << mousePos.x << " Y=" << mousePos.y
-       << " Player: X=" << playerPos.x << " Y=" << playerPos.y;
-
-    SDL_SetWindowTitle(window, ss.str().c_str());
+    SDL_WarpMouseInWindow(window, initPosWindow.x, initPosWindow.y);
 }
 
 void Render::handleKeyDownEvent(const SDL_Event &event) {
     switch (event.key.keysym.sym) {
     case SDLK_a:
-        playerVelocity.x = -speed;
+        playerVelocity.x = speed;
         break;
     case SDLK_d:
-        playerVelocity.x = speed;
+        playerVelocity.x = -speed;
         break;
     case SDLK_s:
         playerVelocity.y = speed;
@@ -33,7 +34,7 @@ void Render::handleKeyDownEvent(const SDL_Event &event) {
     case SDLK_w:
         playerVelocity.y = -speed;
         break;
-    case SDLK_q:
+    case SDLK_ESCAPE:
         quit = true;
         break;
     default:
@@ -82,4 +83,3 @@ void Render::handleEvents() {
 
     lastTime = currentTime;
 }
-

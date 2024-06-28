@@ -1,12 +1,10 @@
 #include "raycaster.hpp"
 
-Raycaster::Raycaster() { step = fov / static_cast<float>(rayCount); }
+Raycaster::Raycaster() : step(fov / static_cast<float>(rayCount)) {}
 
 void Raycaster::intersectionRayWithWall(Position &ray, float &distance,
-                                        vector<vector<int>> tile, float vAngle,
-                                        int count) {
-    float angle = vAngle + (count - rayCount / 2.0f) * step;
-
+                                        const vector<vector<int>> &tile,
+                                        float angle, int &side) const {
     float xStep = cos(angle);
     float yStep = sin(angle);
 
@@ -56,24 +54,28 @@ void Raycaster::intersectionRayWithWall(Position &ray, float &distance,
     ray.y = y;
 }
 
-Position Raycaster::rayCastMinimap(Position start, vector<vector<int>> tile,
-                                   float vAngle, int count) {
+Position Raycaster::rayCastMinimap(const Position &start,
+                                   const vector<vector<int>> &tile,
+                                   float vAngle, int count) const {
     Position ray = start;
     float distance = 0.0f;
-    intersectionRayWithWall(ray, distance, tile, vAngle, count);
+    int side = 0;
+    float angle = vAngle + (count - rayCount / 2.0f) * step;
+    intersectionRayWithWall(ray, distance, tile, angle, side);
     return ray;
 }
 
-vector<Raycaster::Ray> Raycaster::rayCastWorld(Position start,
-                                               vector<vector<int>> tile,
-                                               float vAngle) {
+vector<Raycaster::Ray> Raycaster::rayCastWorld(const Position &start,
+                                               const vector<vector<int>> &tile,
+                                               float vAngle) const {
     vector<Ray> results;
-    for (auto count{0}; count < rayCount; ++count) {
+    for (int count = 0; count < rayCount; ++count) {
         Position ray = start;
         float distance = 0.0f;
-        float direction = vAngle * step;
-        intersectionRayWithWall(ray, distance, tile, vAngle, count);
-        results.push_back({ray, distance, direction, side});
+        int side = 0;
+        float angle = vAngle + (count - rayCount / 2.0f) * step;
+        intersectionRayWithWall(ray, distance, tile, angle, side);
+        results.push_back({ray, distance, angle, side});
     }
     return results;
 }

@@ -30,8 +30,8 @@ void Render::drawCircle(SDL_Renderer *renderer, float x, float y, int radius,
 void Render::drawMiniMap() {
     int miniMapWidth = 200;
     int miniMapHeight = 150;
-    float scaleX = miniMapWidth / static_cast<float>(wordlMapWidth);
-    float scaleY = miniMapHeight / static_cast<float>(wordlMapHeight);
+    float scaleX = miniMapWidth / static_cast<float>(worldMapWidth);
+    float scaleY = miniMapHeight / static_cast<float>(worldMapHeight);
     int miniMapX = 10;
     int miniMapY = 10;
 
@@ -41,14 +41,9 @@ void Render::drawMiniMap() {
 }
 
 void Render::drawTilemapOnMiniMap(int x, int y, int width, int height) {
-    SDL_Rect dstRect = {
-        .x = x,
-        .y = y,
-        .w = width,
-        .h = height,
-    };
+    SDL_Rect dstRect = {.x = x, .y = y, .w = width, .h = height};
     SDL_Rect srcRect = {
-        .x = 0, .y = 0, .w = wordlMapWidth, .h = wordlMapHeight};
+        .x = 0, .y = 0, .w = worldMapWidth, .h = worldMapHeight};
     SDL_RenderCopy(renderer, worldMapTexture, &srcRect, &dstRect);
 }
 
@@ -64,8 +59,7 @@ void Render::drawPlayerVisionOnMiniMap(int x, int y, float scaleX,
     float margin = 5.0f;
     Position start = {
         .x = playerPos.x + (radiusObjPlayer - margin) * cos(vAngle),
-        .y = playerPos.y + (radiusObjPlayer - margin) * sin(vAngle),
-    };
+        .y = playerPos.y + (radiusObjPlayer - margin) * sin(vAngle)};
 
     for (auto i{0}; i < raycaster->rayCount; ++i) {
         Position ray = raycaster->rayCastMinimap(start, map.tile, vAngle, i);
@@ -82,43 +76,41 @@ void Render::drawFloor(int column, float wallHeight) {
     int x2 = (column + 1) * WIDTH / raycaster->rayCount;
     int y2 = (HEIGHT + wallHeight) / 2;
 
-    SDL_Rect floorRect = {
-        .x = x1,
-        .y = y2,
-        .w = x2 - x1,
-        .h = HEIGHT - y2,
-    };
-
-    SDL_Rect textureRect = {
-        .x = column * (wordlMapWidth / raycaster->rayCount),
-        .y = wordlMapHeight / 2,
-        .w = wordlMapWidth / raycaster->rayCount,
-        .h = wordlMapHeight / 2,
-    };
-
-    SDL_RenderCopy(renderer, floorTexture, &textureRect, &floorRect);
+    int tileSize = 1;
+    for (int y = y2; y < HEIGHT; y += tileSize) {
+        for (int x = x1; x < x2; x += tileSize) {
+            SDL_Rect floorRect = {.x = x, .y = y, .w = tileSize, .h = tileSize};
+            SDL_Rect textureRect = {
+                .x = (x - x1) % tileSize,
+                .y = (y - y2) % tileSize,
+                .w = tileSize,
+                .h = tileSize,
+            };
+            SDL_RenderCopy(renderer, floorTexture, &textureRect, &floorRect);
+        }
+    }
 }
 
 void Render::drawCeiling(int column, float wallHeight) {
     int x1 = column * (WIDTH / raycaster->rayCount);
     int x2 = (column + 1) * WIDTH / raycaster->rayCount;
-    int y1 = (HEIGHT - wallHeight) / 2;
+    int y2 = (HEIGHT - wallHeight) / 2;
 
-    SDL_Rect ceilingRect = {
-        .x = x1,
-        .y = 0,
-        .w = x2 - x1,
-        .h = y1,
-    };
-
-    SDL_Rect textureRect = {
-        .x = column * (wordlMapWidth / raycaster->rayCount),
-        .y = 0,
-        .w = wordlMapWidth / raycaster->rayCount,
-        .h = y1, // Use a altura do teto como altura da textura
-    };
-
-    SDL_RenderCopy(renderer, ceilingTexture, &textureRect, &ceilingRect);
+    int tileSize = 1;
+    for (int y = 0; y < y2; y += tileSize) {
+        for (int x = x1; x < x2; x += tileSize) {
+            SDL_Rect ceilingRect = {
+                .x = x, .y = y, .w = tileSize, .h = tileSize};
+            SDL_Rect textureRect = {
+                .x = (x - x1) % tileSize,
+                .y = y % tileSize,
+                .w = tileSize,
+                .h = tileSize,
+            };
+            SDL_RenderCopy(renderer, ceilingTexture, &textureRect,
+                           &ceilingRect);
+        }
+    }
 }
 
 void Render::drawWall(int column, float wallHeight, int side,
@@ -127,37 +119,33 @@ void Render::drawWall(int column, float wallHeight, int side,
     int width = WIDTH / raycaster->rayCount;
     int y = (HEIGHT - wallHeight) / 2;
 
-    int textureHeight = static_cast<int>(HEIGHT / distanceToWall);
-    int textureWidth = wallSurface->w;
+    int tileSize = 32;
+    for (int ty = 0; ty < static_cast<int>(wallHeight); ty += tileSize) {
+        SDL_Rect wallRect = {
+            .x = x,
+            .y = y + ty,
+            .w = width,
+            .h = std::min(tileSize, static_cast<int>(wallHeight) - ty)};
 
-    int textureY = 12;
+        SDL_Rect textureRect = {
+            .x = 0, .y = ty % tileSize, .w = tileSize, .h = wallRect.h};
 
-    SDL_Rect textureRect = {
-        .x = 0,
-        .y = textureY,
-        .w = textureWidth,
-        .h = textureHeight,
-    };
+        float brightnessFactor = 1.0f - (distanceToWall / 10.0f);
+        brightnessFactor = std::max(0.2f, brightnessFactor);
+        brightnessFactor *= (side == 1) ? 0.3f : 1.0f;
 
-    SDL_Rect wallRect = {
-        .x = x,
-        .y = y,
-        .w = width,
-        .h = static_cast<int>(wallHeight),
-    };
-
-    float brightnessFactor = 1.0f - (distanceToWall);
-    brightnessFactor = std::max(0.2f, brightnessFactor);
-    brightnessFactor *= (side == 1) ? 0.5f : 1.0f;
-
-    SDL_RenderCopy(renderer, wallTexture, &textureRect, &wallRect);
+        SDL_SetTextureColorMod(wallTexture, 255 * brightnessFactor,
+                               255 * brightnessFactor, 255 * brightnessFactor);
+        SDL_RenderCopy(renderer, wallTexture, &textureRect, &wallRect);
+    }
 }
 
 void Render::drawRaycaster(const vector<Raycaster::Ray> &rays) {
     for (auto i{0}; i < raycaster->rayCount; ++i) {
         const Raycaster::Ray &ray = rays[i];
 
-        float correctedDistance = ray.distance * cos(deg_to_rad(ray.direction));
+        float correctedDistance =
+            ray.distance * std::cos(degreeToRadians(ray.direction));
         float normalizedDistance =
             1.0f - (correctedDistance / raycaster->maxDistance);
         normalizedDistance = std::max(0.0f, std::min(1.0f, normalizedDistance));

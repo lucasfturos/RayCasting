@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sstream>
 
+using std::shared_ptr;
+
 struct Color {
     Uint8 r, g, b;
 };
@@ -16,8 +18,8 @@ class Render {
     const float characterWidth = 20.0f;
     const float characterHeight = 20.0f;
 
-    int getTilemapWidth() const { return wordlMapWidth; }
-    int getTilemapHeight() const { return wordlMapHeight; }
+    int getTilemapWidth() const { return worldMapWidth; }
+    int getTilemapHeight() const { return worldMapHeight; }
 
   private:
     SDL_Window *window;
@@ -46,13 +48,14 @@ class Render {
     Position cameraPos = initPosWindow;
     Velocity playerVelocity = {0.0f, 0.0f};
 
-    int wordlMapWidth;
-    int wordlMapHeight;
+    int worldMapWidth;
+    int worldMapHeight;
     Uint32 lastTime = SDL_GetTicks();
 
-    float speed = 150.0f;
+    float speed = 15.0f;
     float deltaTime = 0.0f;
     float radiusObjPlayer = 30.0f;
+    float cameraAngle = 0.0f;
 
     bool quit = false;
 

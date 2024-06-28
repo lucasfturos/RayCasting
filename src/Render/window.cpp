@@ -113,12 +113,12 @@ void Render::loadTilemap() {
             SDL_GetError());
     }
 
-    SDL_QueryTexture(worldMapTexture, nullptr, nullptr, &wordlMapWidth,
-                     &wordlMapHeight);
+    SDL_QueryTexture(worldMapTexture, nullptr, nullptr, &worldMapWidth,
+                     &worldMapHeight);
 
-    map = Map(wordlMapWidth, wordlMapHeight);
-    for (int y = 0; y < wordlMapHeight; ++y) {
-        for (int x = 0; x < wordlMapWidth; ++x) {
+    map = Map(worldMapWidth, worldMapHeight);
+    for (int y = 0; y < worldMapHeight; ++y) {
+        for (int x = 0; x < worldMapWidth; ++x) {
             Uint32 pixel = getPixel(worldMapSurface, x, y, 0x80);
             map.tile[y][x] = pixel;
         }

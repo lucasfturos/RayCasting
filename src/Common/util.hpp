@@ -5,9 +5,7 @@
 #include <vector>
 
 // Structs
-template <typename T> struct Point {
-    T x, y;
-};
+template <typename T> struct Point { T x, y; };
 
 struct Map {
     std::vector<std::vector<int>> tile;
@@ -28,17 +26,13 @@ using Velocity = Point<float>;
 using Direction = Point<int>;
 using Mouse = Point<int>;
 
-using std::make_shared;
-using std::shared_ptr;
-using std::vector;
-
 // Constants
 constexpr int WIDTH = 1080;
 constexpr int HEIGHT = 720;
 constexpr float PI = M_PI;
 
 // Functions
-template <typename T> inline T deg_to_rad(T degrees) {
+template <typename T> inline T degreeToRadians(T degrees) {
     return PI * degrees / 180;
 }
 

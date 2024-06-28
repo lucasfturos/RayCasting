@@ -1,4 +1,5 @@
 #include "render.hpp"
+using std::make_shared;
 
 Render::Render() {
     initWindow();
