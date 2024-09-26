@@ -1,3 +1,4 @@
+.cache
 build
 img/Mapa/Mapa.xcf
 img/**/*.png

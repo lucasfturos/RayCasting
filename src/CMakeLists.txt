@@ -37,4 +37,5 @@ target_link_libraries(${PROJECT_NAME}
 # Specifies include directories to use when compiling a given target
 target_include_directories(${PROJECT_NAME} 
     PRIVATE ${SDL2_LIBRARIES}
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
 )

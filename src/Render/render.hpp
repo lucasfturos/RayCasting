@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Raycaster/raycaster.hpp"
+#include "Raycaster/raycaster.hpp"
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <sstream>
