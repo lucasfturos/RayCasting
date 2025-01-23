@@ -2,20 +2,16 @@
 
 Raycaster::Raycaster() : step(fov / static_cast<float>(rayCount)) {}
 
-void Raycaster::intersectionRayWithWall(Position &ray, float &distance,
-                                        const vector<vector<int>> &tile,
-                                        float angle, int &side) const {
-    float xStep = cos(angle);
-    float yStep = sin(angle);
+void Raycaster::calculateStepAndSide(const float &angle, const float &x,
+                                     const float &y, int &stepX, int &stepY,
+                                     float &sideDistX, float &sideDistY,
+                                     float &deltaDistX,
+                                     float &deltaDistY) const {
+    float xStep = std::cos(angle);
+    float yStep = std::sin(angle);
 
-    float x = ray.x;
-    float y = ray.y;
-
-    float deltaDistX = std::abs(1.0f / xStep);
-    float deltaDistY = std::abs(1.0f / yStep);
-
-    int stepX, stepY;
-    float sideDistX, sideDistY;
+    deltaDistX = std::abs(1.0f / xStep);
+    deltaDistY = std::abs(1.0f / yStep);
 
     if (xStep < 0) {
         stepX = -1;
@@ -32,6 +28,17 @@ void Raycaster::intersectionRayWithWall(Position &ray, float &distance,
         stepY = 1;
         sideDistY = (static_cast<int>(y) + 1.0 - y) * deltaDistY;
     }
+}
+
+void Raycaster::intersectionRayWithWall(Position &ray, float &distance,
+                                        const vector<vector<int>> &tile,
+                                        float angle, int &side) const {
+    float x = ray.x;
+    float y = ray.y;
+    int stepX, stepY;
+    float sideDistX, sideDistY, deltaDistX, deltaDistY;
+    calculateStepAndSide(angle, x, y, stepX, stepY, sideDistX, sideDistY,
+                         deltaDistX, deltaDistY);
 
     int hit = 0;
     while (hit == 0 && distance < maxDistance) {
@@ -44,6 +51,7 @@ void Raycaster::intersectionRayWithWall(Position &ray, float &distance,
             y += stepY;
             side = 1;
         }
+
         if (tile[static_cast<int>(y)][static_cast<int>(x)] > 0)
             hit = 1;
 

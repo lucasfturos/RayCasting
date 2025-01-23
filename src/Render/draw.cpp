@@ -143,26 +143,25 @@ void Render::drawWall(int column, float wallHeight, int side,
 void Render::drawRaycaster(const vector<Raycaster::Ray> &rays) {
     for (auto i{0}; i < raycaster->rayCount; ++i) {
         const Raycaster::Ray &ray = rays[i];
-
-        float correctedDistance =
+        const float correctedDistance =
             ray.distance * std::cos(degreeToRadians(ray.direction));
-        float normalizedDistance =
-            1.0f - (correctedDistance / raycaster->maxDistance);
-        normalizedDistance = std::max(0.0f, std::min(1.0f, normalizedDistance));
-        int sizeWall = 300;
-        float wallHeight = normalizedDistance * sizeWall;
+        const float normalizedDistance =
+            std::max(0.0f, std::min(1.0f, 1.0f - (correctedDistance /
+                                                  raycaster->maxDistance)));
+        const int sizeWall = 300;
+        const float wallHeight = normalizedDistance * sizeWall;
 
-        drawCeiling(i, wallHeight);
-        drawWall(i, wallHeight, ray.side, ray.distance);
         drawFloor(i, wallHeight);
+        drawWall(i, wallHeight, ray.side, ray.distance);
+        drawCeiling(i, wallHeight);
     }
 }
 
 void Render::drawPlayerVision() {
-    float vAngle = atan2(mousePos.y - cameraPos.y, mousePos.x - cameraPos.x);
+    const float vAngle =
+        std::atan2(mousePos.y - cameraPos.y, mousePos.x - cameraPos.x);
     Position start = playerPos;
-    vector<Raycaster::Ray> rays =
-        raycaster->rayCastWorld(start, map.tile, vAngle);
+    auto rays = raycaster->rayCastWorld(start, map.tile, vAngle);
 
     drawRaycaster(rays);
 }

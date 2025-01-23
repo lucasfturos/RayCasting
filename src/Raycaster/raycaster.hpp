@@ -22,6 +22,10 @@ class Raycaster {
     void intersectionRayWithWall(Position &ray, float &distance,
                                  const vector<vector<int>> &tile, float angle,
                                  int &side) const;
+    void calculateStepAndSide(const float &angle, const float &x,
+                              const float &y, int &stepX, int &stepY,
+                              float &sideDistX, float &sideDistY,
+                              float &deltaDistX, float &deltaDistY) const;
 
   public:
     Raycaster();

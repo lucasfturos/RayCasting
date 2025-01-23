@@ -8,14 +8,27 @@ void Render::handleMouseMotionEvent() {
 
     int dx = x - initPosWindow.x;
 
-    float sensitivity = 0.005f;
-    float angle = dx * sensitivity;
-    cameraAngle += angle;
+    float sensitivity = 0.002f;
+    float rotationAngle = dx * sensitivity;
+
+    cameraAngle += rotationAngle;
+
     if (cameraAngle < 0) {
         cameraAngle += 2 * M_PI;
     } else if (cameraAngle >= 2 * M_PI) {
         cameraAngle -= 2 * M_PI;
     }
+
+    float cosAngle = std::cos(rotationAngle);
+    float sinAngle = std::sin(rotationAngle);
+
+    float oldDirX = dirX;
+    dirX = dirX * cosAngle - dirY * sinAngle;
+    dirY = oldDirX * sinAngle + dirY * cosAngle;
+
+    float oldPlaneX = planeX;
+    planeX = planeX * cosAngle - planeY * sinAngle;
+    planeY = oldPlaneX * sinAngle + planeY * cosAngle;
 
     SDL_WarpMouseInWindow(window, initPosWindow.x, initPosWindow.y);
 }
@@ -51,6 +64,9 @@ void Render::handleKeyUpEvent(const SDL_Event &event) {
     case SDLK_s:
     case SDLK_w:
         playerVelocity.y = 0.0f;
+        break;
+    case SDLK_m:
+        showMiniMap = !showMiniMap;
         break;
     default:
         break;

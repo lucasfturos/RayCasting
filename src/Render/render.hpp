@@ -48,16 +48,19 @@ class Render {
     Position cameraPos = initPosWindow;
     Velocity playerVelocity = {0.0f, 0.0f};
 
+    float dirX = -1.0f, dirY = 0.0f;
+    float planeX = 0.0f, planeY = 0.6f;
     int worldMapWidth;
     int worldMapHeight;
     Uint32 lastTime = SDL_GetTicks();
 
     float speed = 15.0f;
     float deltaTime = 0.0f;
-    float radiusObjPlayer = 30.0f;
+    float radiusObjPlayer = 20.0f;
     float cameraAngle = 0.0f;
 
     bool quit = false;
+    bool showMiniMap = false;
 
     std::vector<std::vector<Color>> wallTextures;
 

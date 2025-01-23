@@ -1,11 +1,10 @@
 #include "render.hpp"
 using std::make_shared;
 
-Render::Render() {
+Render::Render() : raycaster(make_shared<Raycaster>()) {
     initWindow();
     initTexture();
     SDL_SetRelativeMouseMode(SDL_TRUE);
-    raycaster = make_shared<Raycaster>();
 }
 
 Render::~Render() {
@@ -42,7 +41,8 @@ Render::~Render() {
 
 void Render::draw() {
     drawPlayerVision();
-    drawMiniMap();
+    if (showMiniMap)
+        drawMiniMap();
 }
 
 void Render::run() {
